@@ -1,0 +1,39 @@
+{
+  "name": "moebio-framework",
+  "version": "0.4.6",
+  "license": "MIT",
+  "author": {
+    "name": "Santiago Ortiz",
+    "url": "http://moebio.com/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/moebiolabs/moebio_framework.git"
+  },
+  "homepage": "http://moebiolabs.github.io/moebio_framework/",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-contrib-uglify": "~0.2.4",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-esperanto": "^0.4.0",
+    "grunt-git": "^0.3.5",
+    "grunt-jscs": "^1.8.0",
+    "grunt-jsdoc": "^0.6.4",
+    "grunt-karma": "^0.11.0",
+    "grunt-release": "^0.13.0",
+    "grunt-remove": "^0.1.0",
+    "grunt-shell": "^1.1.2",
+    "grunt-string-replace": "^1.2.0",
+    "jscs-stylish": "^0.3.1",
+    "jsdoc": "git+https://github.com/jsdoc3/jsdoc.git",
+    "jshint-stylish": "^2.0.0",
+    "karma": "^0.12.37",
+    "karma-chrome-launcher": "^0.1.12",
+    "karma-jasmine": "^0.1.6",
+    "lodash": "^3.3.1",
+    "rollup": "^0.15.0",
+    "striptags": "^2.0.2"
+  }
+}

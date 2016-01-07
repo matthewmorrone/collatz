@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Collatz Conjecture Tree</title>
+	<style>
+	@charset "UTF-8";
+	@import 'http://www.matthewmorrone.com/reset.css';
+	@import 'http://www.matthewmorrone.com/base.css';
+	@import 'http://www.matthewmorrone.com/style.css';
+	@import 'http://www.matthewmorrone.com/jquery.ui.css';
+	@import 'http://www.matthewmorrone.com/fonts/font-awesome/css/font-awesome.min.css';
+	.inverted {
+		filter: 100%;
+		background-color: black;
+	}
+	
+	body {
+		width: 80%;
+		margin: auto;
+		height: 100%;
+		overflow-y: hidden;
+	}
+	
+	#container {
+		position: absolute;
+		margin: auto;
+		width: 80%;
+		height: 100%;
+		border: 1px dashed lightgray;
+	}
+	</style>
+	<script src="http://www.matthewmorrone.com/prefixfree.js"></script>
+	<script src="http://www.matthewmorrone.com/jquery.js"></script>
+	<script src="http://www.matthewmorrone.com/jquery.ui.js"></script>
+	<script src="js/starch.utils.js"></script>
+	<script src="js/starch.object.js"></script>
+	<script src="js/starch.array.js"></script>
+	<script src="js/linkurious/dist/sigma.require.js"></script>
+	<script src="js/linkurious/dist/sigma.plugins.js"></script>
+	<script src="js/sigma.helpers.js"></script>
+	<script>
+	// http://moebio.com/
+	// http://arborjs.org/docs/barnes-hut
+	// http://matthewmorrone.com/collatz/sigma/examples/
+	// https://github.com/jacomyal/sigma.js/wiki
+	// https://github.com/jacomyal/sigma.js/tree/master/plugins
+	function collatz(n) {
+		if (n % 2) return 3 * n + 1
+		return n / 2
+	}
+
+	function* collatzGen(n) {
+		var c = n
+		yield c
+		while (c > 2) {
+			c = collatz(c)
+			yield c
+		}
+		yield 1
+	}
+	</script>
+</head>
+
+<body>
+	<div id="container"></div>
+	<div id="div"></div>
+</body>
+<script>
+var s = new sigma({
+	type: 'canvas',
+	// type: 'webgl',
+	// container: 'container',
+	renderer: {
+		container: document.getElementById('container'),
+		type: 'canvas'
+	},
+	settings: {
+		animationsTime: 1000,
+		edgeColor: 'green',
+		labelThreshold: 1,
+		minArrowSize: 8,
+		// zoomMin: 1,
+		// zoomMax: 1,
+		sideMargin: 2,
+		labelSize: "proportional",
+		labelSizeRatio: 2,
+		// mouseEnabled: false
+		dragNodeStickiness: 0.01,
+		borderSize: 2,
+		outerBorderSize: 5,
+		defaultNodeBorderColor: '#fff',
+		defaultNodeOuterBorderColor: 'rgb(236, 81, 72)',
+		enableEdgeHovering: false,
+		edgeHoverHighlightNodes: 'circle',
+		nodesPowRatio: 14,
+		edgesPowRatio: 2,
+	}
+})
+s.bind('clickNode', function(e) {
+	console.log('The clicked node: ', e.data.node);
+});
+
+function renderGraph(s, i) {
+	var j = i,
+		y = 0
+	var n1 = {},
+		n2, e
+	for (let x of collatzGen(i)) {
+		n1 = {
+			id: "n" + x,
+			label: "" + x,
+			y: j,
+			x: x,
+			size: .5
+		}
+		if (!s.graph.hasNode(n1.id)) {
+			s.graph.addNode(n1)
+		}
+		else {
+			log("exists")
+		}
+		// if (n1 && n2) {
+		try {
+			e = {
+				id: "e" + x +"-" +y,
+				source: "n" + x,
+				target: "n" + y
+			}
+			if (!s.graph.hasEdge(e.id)) {
+				s.graph.addEdge(e)
+			}
+		}
+		catch(ex) {log(ex)}
+		// }
+		log(y, x, n1, n2)
+		y = x
+		n2 = n1
+		j--
+	}
+}
+var b = 50
+while (b > 1) {
+	renderGraph(s, b)
+	b--
+}
+// renderGraph(s, b)
+// renderGraph(s, 50)
+// renderGraph(s, 30)
+// renderGraph(s, 49)
+	// function redoGraph(i, p) {
+	// 	function generate(i) {
+	// 		while (i > 0) {
+	// 			c = i
+	// 			a = []
+	// 			while (c != 1) {
+	// 				a.unshift(c)
+	// 				c = collatz(c)
+	// 				p[a[0]] = c
+	// 			}
+	// 			a.unshift(1)
+	// 			i--
+	// 		}
+	// 	}
+	// 	generate(i)
+	// 	function* iterator(p) {
+	// 		for (var x in p) {
+	// 			if (p.hasOwnProperty(x)) {
+	// 				yield [parseInt(x, 10), p[x]]
+	// 			}
+	// 		}
+	// 	}
+	// 	var gen = iterator(p)
+	// 	var si = setInterval(function() {
+	// 		let t = gen.next()
+	// 		if (t.done) {
+	// 			clearInterval(si)
+	// 			return
+	// 		}
+	// 		let x = t.value[0]
+	// 		let p = t.value[1]
+	// 		addToGraph(s, x, p)
+	// 		s.refresh()
+	// 	}, 1000)	
+	// }
+	// var index = 1
+	// var si = setInterval(function(p) {
+	// 	redoGraph(index, p)
+	// 	index++
+	// }, 1000, p)
+var activeState = sigma.plugins.activeState(s);
+var dragListener = sigma.plugins.dragNodes(s, s.renderers[0], activeState);
+// sigma.canvas.edges.autoCurve(s)
+forceAtlas(s)
+// fruchtermanReingold(s)
+</script>
+
+</html>
